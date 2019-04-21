@@ -1,3 +1,5 @@
+import json
+
 import scrapy
 from scrapy.crawler import Crawler, CrawlerProcess
 from scrapy import signals
@@ -6,10 +8,20 @@ from spiders.rpgSpider import RpgSpider
 
 
 records = []
-class ItemPipeline(object):
-	def process_item(self, item, spider):
-		records.append(item)
 
+
+class ItemPipeline(object):
+    def open_spider(self, spider):
+        self.file = open('games.json', 'w')
+
+    def close_spider(self, spider):
+        self.file.close()
+
+    def process_item(self, item, spider):
+        records.append(item)
+        line = json.dumps(item, indent=4, sort_keys=False)
+        self.file.write(line)
+        return item
 
 def main():
     process = CrawlerProcess({
@@ -22,9 +34,6 @@ def main():
     process.crawl(RpgSpider)
     process.start()
 
-    from pprint import pprint
-    pprint(records)
-    1/0
 
 if __name__ == "__main__":
     main()

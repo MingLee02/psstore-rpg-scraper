@@ -14,7 +14,7 @@ class RpgSpider(scrapy.Spider):
             game = {
                 'title': games.xpath('//span[@title]//text()')[num].extract(),
                 'url': 'https://store.playstation.com' + games.xpath('a/@href')[num].extract(),
-                'image': games.xpath('//div[@class="product-image__img product-image__img--main"]')[num].xpath('img')[0].extract()
+                'image': games.xpath('//div[@class="product-image__img product-image__img--main"]')[num].xpath('img')[0].xpath("@srcset").extract()[0].split(',')[3].replace("4x", " ").strip()
             }
             yield game
         
